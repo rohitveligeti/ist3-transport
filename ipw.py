@@ -19,9 +19,6 @@ data = data.dropna().reset_index(drop=True)
 data["treated"] = data["treated"].astype(int)
 data["alive_independent"] = data["alive_independent"].astype(int)
 
-n_treated = int((data["treated"] == 1).sum())
-n_control = int((data["treated"] == 0).sum())
-
 # DATA PROCESSING DONE, PROPENSITY MODEL HERE
 
 model = LogisticRegression(max_iter=1000)
@@ -40,16 +37,9 @@ weight = pd.Series(0.0, index=data.index)
 weight[is_treated] = 1 / propensity[is_treated]
 weight[is_control] = 1 / (1 - propensity[is_control])
 
-for covariate in covariates:
 
-    # the book uses horvitz-thompson estimator, but claude is telling me to use hajek–I kept the horvitz-thompson estimator here
-    #hajek is divided by weights instead of len(data)
-
-    raw_mean_treated = data.loc[is_treated, covariate].mean()
-    raw_mean_control = data.loc[is_control, covariate].mean()
-
-    weighted_mean_treated = (weight * data[covariate])[is_treated].sum() / len(data)
-    weighted_mean_control = (weight * data[covariate])[is_control].sum() / len(data)
+# the book uses horvitz-thompson estimator, but claude is telling me to use hajek–I kept the horvitz-thompson estimator here
+#hajek is divided by weights instead of len(data)
 
 outcome = data["alive_independent"]
 
