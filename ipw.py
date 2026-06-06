@@ -53,3 +53,5 @@ print(f"Tau Horvitz-Thompson IPW: {tau_ht:.3f}")
 
 # The book didnt give me a variance formula/confidence intervals to use for the IPW, so I will end the ipw here
 
+# plot down: trial results/analysis, + CI, AIPW, IPW, g-formula,
+# slpit everything in function to reuse later 

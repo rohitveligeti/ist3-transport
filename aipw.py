@@ -59,7 +59,7 @@ tau_aipw = gamma_aipw.mean()
 n = len(data)
 V_aipw = ((gamma_aipw - tau_aipw) ** 2).sum() / (n - 1)
 
-print(V_aipw)
+print(tau_aipw)
 
 # confidence intervals
 
