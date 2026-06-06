@@ -1,22 +1,3 @@
-"""
-Preprocessing: combine IST-3 and IST-1 into one dataset with a shared,
-all-numeric covariate encoding.
-
-Six shared covariates (same numeric encoding in both):
-    age              years
-    delay_hours      hours from stroke onset to randomisation
-    sbp              systolic BP at randomisation (mmHg)
-    male             1 = male, 0 = female
-    atrial_fib       1 = yes, 0 = no
-    visible_infarct  1 = yes, 0 = no
-Plus:
-    source             1 = IST-3, 0 = IST-1
-    alive_independent  1 = alive & independent (OHS 0-2) at 6 months, 0 = not;
-                       filled for IST-3 only (NaN for IST-1) per request.
-                       IST-1 actually has this too (OCCODE in {3,4}); see the
-                       commented line in load_ist1 to turn it on.
-"""
-
 import pandas as pd
 
 IST3_PATH = "df.sas7bdat"
@@ -24,7 +5,7 @@ IST1_PATH = "ist1.CSV"
 OUTPUT_PATH = "ist_combined.csv"
 
 SHARED = ["source", "age", "delay_hours", "sbp", "male",
-          "atrial_fib", "visible_infarct", "alive_independent"]
+          "atrial_fib", "visible_infarct", "treated", "alive_independent"]
 
 
 def load_ist3(path):
@@ -38,6 +19,7 @@ def load_ist3(path):
     df["visible_infarct"] = pd.to_numeric(raw["vis_infarct"], errors="coerce").map({1: 1, 2: 0})     # 1=Yes,2=No
     # outcome: alive & independent at 6 months (aliveind6: 1=Yes / 2=No)
     df["alive_independent"] = (pd.to_numeric(raw["aliveind6"], errors="coerce") == 1).astype(float)
+    df["treated"] = (pd.to_numeric(raw["itt_treat"], errors="coerce") == 0).astype(float)  # 1 = alteplase
     df["source"] = 1
     return df
 
@@ -51,10 +33,13 @@ def load_ist1(path):
     df["male"]            = raw["SEX"].map({"M": 1, "F": 0})
     df["atrial_fib"]      = raw["RATRIAL"].map({"Y": 1, "N": 0})     # NaN for the 984 pilot patients
     df["visible_infarct"] = raw["RVISINF"].map({"Y": 1, "N": 0})
-    # not populated per request:
-    df["alive_independent"] = float("nan")
-    # To fill it from IST-1 instead, comment the line above and use:
-    # df["alive_independent"] = raw["OCCODE"].map({1: 0, 2: 0, 3: 1, 4: 1})  # OHS 0-2 analog
+    # IST-1's OWN 6-month functional outcome, via OCCODE (1=dead, 2=dependent,
+    # 3=not recovered, 4=recovered) -> alive & independent = OCCODE in {3, 4}.
+    # HELD OUT of the transport: every model fits on IST-3 (source==1) only, so this
+    # never enters membership/weights/outcome/propensity/gamma. It exists purely to
+    # validate the IST-3 outcome model's predictions on the IST-1 population.
+    df["alive_independent"] = pd.to_numeric(raw["OCCODE"], errors="coerce").map({1: 0, 2: 0, 3: 1, 4: 1})
+    df["treated"] = float("nan")     # IST-1 has no alteplase arm; only IST-3 defines treatment
     df["source"] = 0
     return df
 

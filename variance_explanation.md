@@ -1,0 +1,2 @@
+**The Variance Equations Used**
+

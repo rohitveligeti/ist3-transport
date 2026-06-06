@@ -1,10 +1,4 @@
-"""
-Plot the distribution of each shared covariate (and the membership score)
-for IST-3 vs IST-1, reading ist_combined_with_membership.csv.
 
-Continuous variables -> overlaid density histograms.
-Binary variables     -> side-by-side proportion bars.
-"""
 
 import numpy as np
 import pandas as pd
@@ -17,7 +11,7 @@ CONTINUOUS = ["age", "delay_hours", "sbp", "pi_membership"]
 BINARY = ["male", "atrial_fib", "visible_infarct"]
 VARIABLES = ["age", "delay_hours", "sbp", "male", "atrial_fib", "visible_infarct", "pi_membership"]
 
-IST3_COLOR = "#9c2f26"   # red  = IST-3 (source = 1)
+IST3_COLOR = "#da2f20"   # red  = IST-3 (source = 1)
 IST1_COLOR = "#2d6b61"   # teal = IST-1 (source = 0)
 
 
