@@ -5,8 +5,8 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 HERE = Path(__file__).resolve().parent             # this script lives in graphs/
-DATA = HERE.parent / "steps" / "ist_combined_all_steps.csv"   # data is in ../steps/
-OUT = HERE / "calibration_plots.png"               # save alongside this script
+DATA = HERE.parent / "steps" / "ist_combined_all_steps4.csv"   # data is in ../steps/
+OUT = HERE / "calibration_plots_rf.png"               # save alongside this script
 
 BINS = 15
 data = pd.read_csv(DATA)

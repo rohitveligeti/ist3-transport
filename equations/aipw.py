@@ -1,10 +1,4 @@
 def trial_gamma(data, source, treatment, outcome, mu1, mu0, propensity, output):
-    """
-    Per-row trial AIPW score (effect in the trial population), into `output`.
-      trial  rows (source == 1):  (mu1 - mu0) + A*(Y-mu1)/e - (1-A)*(Y-mu0)/(1-e)
-      target rows (source == 0):  NaN
-    The trial ATE is gamma[trial].mean(); its variance is gamma[trial].var() / n_trial.
-    """
     out = data.copy()
     trial = out[source] == 1
     A, Y = out[treatment], out[outcome]
@@ -20,13 +14,6 @@ def trial_gamma(data, source, treatment, outcome, mu1, mu0, propensity, output):
 
 
 def transport_gamma(data, source, treatment, outcome, mu1, mu0, propensity, weight, output):
-    """
-    Per-row transport AIPW contribution (effect for the target population), into `output`.
-      target rows (source == 0):  mu1 - mu0
-      trial  rows (source == 1):  weight * ( A*(Y-mu1)/e - (1-A)*(Y-mu0)/(1-e) )
-    The transported effect is gamma.sum() / n_target; its variance comes from the
-    spread of this column.
-    """
     out = data.copy()
     trial = out[source] == 1
     target = out[source] == 0

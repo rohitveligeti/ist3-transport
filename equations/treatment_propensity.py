@@ -5,8 +5,7 @@ from sklearn.pipeline import make_pipeline
 
 
 def logistic_treatment_propensity(data, covariates, source, treatment, prediction):
-    """Fit P(treatment == 1 | X) on rows where source==1; write predictions into
-    `prediction` for those rows, NaN elsewhere."""
+
     trial = data[data[source] == 1]
     model = make_pipeline(StandardScaler(), LogisticRegression(max_iter=1000))
     model.fit(trial[covariates], trial[treatment])
